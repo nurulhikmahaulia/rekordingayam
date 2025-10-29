@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REKORDING HARIAN AYAM PETELUR - BUMDES CIPTA MANDIRI SEJAHTERA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS yang sama seperti sebelumnya */
+        :root {
+            --primary: #2c786c;
+            --secondary: #ff9800;
+            --success: #4caf50;
+            --info: #2196f3;
+            --warning: #ffc107;
+            --danger: #f44336;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gradient-primary: linear-gradient(135deg, #2c786c 0%, #4fa084 100%);
+            --gradient-secondary: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .app-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--gradient-primary);
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+
+        .header h2 {
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .header p {
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-left: 4px solid var(--primary);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .stats-card h5 {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats-card h5 i {
+            color: var(--secondary);
+        }
+
+        .stats-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stats-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .formula-info {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            border-left: 4px solid var(--info);
+        }
+
+        .formula-info h6 {
+            margin-bottom: 10px;
+            color: var(--info);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .formula-info p {
+            margin-bottom: 5px;
+            font-size: 0.95rem;
+        }
+
+        .auto-calc-note {
+            font-size: 0.85rem;
+            color: #666;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        .action-buttons {
+            margin-bottom: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn {
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-info {
+            background: var(--info);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: var(--dark);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .table-title {
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.4rem;
+        }
+
+        .table-responsive {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            background: var(--gradient-primary);
+            color: white;
+            font-weight: 600;
+            padding: 12px 8px;
+            text-align: center;
+            position: relative;
+        }
+
+        th::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        td {
+            border: 1px solid #e9ecef;
+            padding: 10px 8px;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tr:hover td {
+            background-color: #e9f7fe;
+        }
+
+        .calculated-field {
+            background-color: #f0f8ff;
+            font-weight: bold;
+            color: var(--info);
+        }
+
+        .modal-header {
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 0;
+        }
+
+        .modal-title {
+            font-weight: 600;
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(44, 120, 108, 0.25);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .form-text {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .floating-chicken {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 2rem;
+            color: var(--secondary);
+            animation: float 3s ease-in-out infinite;
+            z-index: 1000;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .header h2 {
+                font-size: 1.3rem;
+            }
+            
+            .stats-value {
+                font-size: 1.5rem;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1><i class="fas fa-egg"></i> REKORDING HARIAN AYAM PETELUR</h1>
+            <h2>"BUMDES CIPTA MANDIRI SEJAHTERA"</h2>
+            <p><strong><i class="fas fa-calendar-alt"></i> Tanggal masuk : 23 Agustus 2025</strong></p>
+            <p><strong><i class="fas fa-kiwi-bird"></i> Populasi : 1.500 Ekor</strong></p>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="stats-card">
+                    <h5><i class="fas fa-egg"></i> Produksi Hari Ini</h5>
+                    <div class="stats-value" id="today-production">0</div>
+                    <div class="stats-label">Butir Telur</div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="stats-card">
+                    <h5><i class="fas fa-weight-hanging"></i> Rata-rata Fi</h5>
+                    <div class="stats-value" id="avg-fi">0</div>
+                    <div class="stats-label">Gram/Ekor</div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="stats-card">
+                    <h5><i class="fas fa-chart-line"></i> Rata-rata %HD</h5>
+                    <div class="stats-value" id="avg-hd">0</div>
+                    <div class="stats-label">Persentase</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="formula-info">
+            <h6><i class="fas fa-calculator"></i> Rumus Perhitungan Otomatis:</h6>
+            <p><strong>Fi (Feed Intake)</strong> = (Pakan (Kg) × 1000) / Sisa Populasi (dalam gram/ekor)</p>
+            <p><strong>%HD (Hen Day Production)</strong> = (Telur Butir / Sisa Populasi) × 100</p>
+            <p class="auto-calc-note">Nilai Fi dan %HD akan dihitung otomatis berdasarkan data yang dimasukkan</p>
+        </div>
+
+        <div class="action-buttons">
+            <button id="btnTambah" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i> Tambah Data
+            </button>
+            <button id="btnCetak" class="btn btn-success">
+                <i class="fas fa-file-pdf"></i> Cetak PDF
+            </button>
+            <button id="btnShare" class="btn btn-info">
+                <i class="fab fa-whatsapp"></i> Share WhatsApp
+            </button>
+        </div>
+
+        <div class="table-container">
+            <h3 class="table-title"><i class="fas fa-table"></i> Data Rekording Harian</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">Minggu</th>
+                            <th rowspan="2">Hari</th>
+                            <th rowspan="2">Tanggal</th>
+                            <th colspan="3">Populasi</th>
+                            <th colspan="2">Pakan</th>
+                            <th colspan="4">Produksi Telur</th>
+                            <th rowspan="2">Keterangan</th>
+                            <th rowspan="2">Aksi</th>
+                        </tr>
+                        <tr>
+                            <th>Unggul</th>
+                            <th>Mati</th>
+                            <th>Sisa</th>
+                            <th>Kg</th>
+                            <th>Fi</th>
+                            <th>Kg</th>
+                            <th>Butir</th>
+                            <th>%HD</th>
+                            <th>Rusak</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Data akan diisi oleh JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2025 BUMDES CIPTA MANDIRI SEJAHTERA - Sistem Rekording Ayam Petelur</p>
+        </div>
+    </div>
+
+    <div class="floating-chicken">
+        <i class="fas fa-kiwi-bird"></i>
+    </div>
+
+    <!-- Modal untuk Tambah/Ubah Data -->
+    <div class="modal fade" id="dataModal" tabindex="-1" aria-labelledby="dataModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="dataModalLabel"><i class="fas fa-edit"></i> Tambah Data Rekording</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="dataForm">
+                        <input type="hidden" id="recordId">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="minggu" class="form-label">Minggu</label>
+                                <input type="number" class="form-control" id="minggu" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="hari" class="form-label">Hari</label>
+                                <select class="form-select" id="hari" required>
+                                    <option value="">Pilih Hari</option>
+                                    <option value="Minggu">Minggu</option>
+                                    <option value="Senin">Senin</option>
+                                    <option value="Selasa">Selasa</option>
+                                    <option value="Rabu">Rabu</option>
+                                    <option value="Kamis">Kamis</option>
+                                    <option value="Jumat">Jumat</option>
+                                    <option value="Sabtu">Sabtu</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="tanggal" class="form-label">Tanggal</label>
+                                <input type="date" class="form-control" id="tanggal" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="unggul" class="form-label">Unggul</label>
+                                <input type="number" class="form-control" id="unggul" value="1500">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="mati" class="form-label">Mati</label>
+                                <input type="number" class="form-control" id="mati">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="sisa" class="form-label">Sisa</label>
+                                <input type="number" class="form-control" id="sisa" readonly>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="pakanKg" class="form-label">Pakan (Kg)</label>
+                                <input type="number" step="0.1" class="form-control" id="pakanKg">
+                                <div class="form-text">Contoh: 150 kg untuk 1500 ekor = Fi 100</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="pakanFi" class="form-label">Pakan (Fi) - Otomatis</label>
+                                <input type="number" step="0.1" class="form-control calculated-field" id="pakanFi" readonly>
+                                <div class="form-text">Satuan: gram/ekor/hari</div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label for="telurKg" class="form-label">Telur (Kg)</label>
+                                <input type="number" step="0.1" class="form-control" id="telurKg">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="telurButir" class="form-label">Telur (Butir)</label>
+                                <input type="number" class="form-control" id="telurButir">
+                                <div class="form-text">Contoh: 348 butir untuk 1500 ekor = %HD 23.2</div>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="persenHD" class="form-label">%HD - Otomatis</label>
+                                <input type="number" step="0.1" class="form-control calculated-field" id="persenHD" readonly>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="rusak" class="form-label">Rusak</label>
+                                <input type="number" class="form-control" id="rusak">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="keterangan" class="form-label">Keterangan</label>
+                            <input type="text" class="form-control" id="keterangan">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Batal
+                    </button>
+                    <button type="button" class="btn btn-primary" id="btnSimpan">
+                        <i class="fas fa-save"></i> Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js'
+        import { 
+            getFirestore,
+            collection,
+            doc,
+            getDocs,
+            getDoc,
+            addDoc,
+            deleteDoc,
+            updateDoc,
+            query,
+            orderBy
+        } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+        // Konfigurasi Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDdr0fxnYpfeG2b6GlTQ_-4TqpmGk2uvOk",
+            authDomain: "insan-cemerlang-80713.firebaseapp.com",
+            projectId: "insan-cemerlang-80713",
+            storageBucket: "insan-cemerlang-80713.appspot.com",
+            messagingSenderId: "1016858047753",
+            appId: "1:1016858047753:web:0534dda2085c2adab68fd8",
+            measurementId: "G-E7G0K9XTCD"
+        };
+
+        // Inisialisasi Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Data sementara untuk simulasi (akan diganti dengan Firebase)
+        let dataRekording = [];
+
+        // Fungsi untuk mengambil data dari Firestore
+        async function ambilDataRekording() {
+            try {
+                const q = query(collection(db, "rekording_ayam"), orderBy("tanggal", "asc"));
+                const querySnapshot = await getDocs(q);
+                const data = [];
+                querySnapshot.forEach((doc) => {
+                    data.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                return data;
+            } catch (error) {
+                console.error("Error mengambil data: ", error);
+                // Jika error, gunakan data contoh
+                return dataRekording;
+            }
+        }
+
+        // Fungsi untuk menambahkan data ke Firestore
+        async function tambahDataRekording(data) {
+            try {
+                const docRef = await addDoc(collection(db, "rekording_ayam"), data);
+                console.log("Data berhasil ditambahkan dengan ID: ", docRef.id);
+                return true;
+            } catch (error) {
+                console.error("Error menambahkan data: ", error);
+                // Jika error, simpan ke data sementara
+                data.id = 'local_' + Date.now();
+                dataRekording.push(data);
+                return true;
+            }
+        }
+
+        // Fungsi untuk mengubah data di Firestore
+        async function ubahDataRekording(id, data) {
+            try {
+                if (id.startsWith('local_')) {
+                    // Update data lokal
+                    const index = dataRekording.findIndex(item => item.id === id);
+                    if (index !== -1) {
+                        dataRekording[index] = { ...data, id };
+                    }
+                    return true;
+                } else {
+                    // Update data Firebase
+                    const docRef = doc(db, "rekording_ayam", id);
+                    await updateDoc(docRef, data);
+                    console.log("Data berhasil diubah");
+                    return true;
+                }
+            } catch (error) {
+                console.error("Error mengubah data: ", error);
+                return false;
+            }
+        }
+
+        // Fungsi untuk menghapus data dari Firestore
+        async function hapusDataRekording(id) {
+            try {
+                if (id.startsWith('local_')) {
+                    // Hapus data lokal
+                    dataRekording = dataRekording.filter(item => item.id !== id);
+                    return true;
+                } else {
+                    // Hapus data Firebase
+                    await deleteDoc(doc(db, "rekording_ayam", id));
+                    console.log("Data berhasil dihapus");
+                    return true;
+                }
+            } catch (error) {
+                console.error("Error menghapus data: ", error);
+                return false;
+            }
+        }
+
+        // Fungsi untuk menghitung Fi (Feed Intake) dalam gram/ekor
+        function hitungFi(pakanKg, sisaPopulasi) {
+            if (!pakanKg || !sisaPopulasi || sisaPopulasi === 0) return 0;
+            // Konversi kg ke gram dan bagi dengan jumlah ayam
+            return (pakanKg * 1000) / sisaPopulasi;
+        }
+
+        // Fungsi untuk menghitung %HD (Hen Day Production) - DIPERBAIKI
+        function hitungPersenHD(telurButir, sisaPopulasi) {
+            if (!telurButir || !sisaPopulasi || sisaPopulasi === 0) return 0;
+            // Perhitungan sesuai contoh: 348 ÷ 1500 = 0.232 × 100 = 23.2%
+            return (telurButir / sisaPopulasi) * 100;
+        }
+
+        // Fungsi untuk menampilkan data di tabel
+        function tampilkanData(data) {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+
+            if (data.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="15" class="text-center py-4">
+                            <i class="fas fa-info-circle me-2"></i>Belum ada data rekording. Klik "Tambah Data" untuk menambahkan data baru.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.minggu || ''}</td>
+                    <td>${item.hari || ''}</td>
+                    <td>${formatTanggal(item.tanggal) || ''}</td>
+                    <td>${item.unggul || ''}</td>
+                    <td>${item.mati || ''}</td>
+                    <td>${item.sisa || ''}</td>
+                    <td>${item.pakanKg || ''}</td>
+                    <td class="calculated-field">${formatAngka(item.pakanFi) || ''}</td>
+                    <td>${item.telurKg || ''}</td>
+                    <td>${item.telurButir || ''}</td>
+                    <td class="calculated-field">${formatAngka(item.persenHD) || ''}</td>
+                    <td>${item.rusak || ''}</td>
+                    <td>${item.keterangan || ''}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning btn-ubah" data-id="${item.id}">
+                            <i class="fas fa-edit"></i> Ubah
+                        </button>
+                        <button class="btn btn-sm btn-danger btn-hapus" data-id="${item.id}">
+                            <i class="fas fa-trash"></i> Hapus
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // Tambahkan event listener untuk tombol ubah dan hapus
+            document.querySelectorAll('.btn-ubah').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    ubahData(id);
+                });
+            });
+
+            document.querySelectorAll('.btn-hapus').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    hapusData(id);
+                });
+            });
+
+            // Update statistik
+            updateStats(data);
+        }
+
+        // Fungsi untuk memuat dan menampilkan data
+        async function muatData() {
+            const data = await ambilDataRekording();
+            tampilkanData(data);
+        }
+
+        // Format tanggal dari format Firestore ke format Indonesia
+        function formatTanggal(tanggal) {
+            if (!tanggal) return '';
+            
+            // Handle both Firestore Timestamp and Date objects
+            let date;
+            if (typeof tanggal.toDate === 'function') {
+                date = tanggal.toDate();
+            } else if (tanggal instanceof Date) {
+                date = tanggal;
+            } else {
+                date = new Date(tanggal);
+            }
+            
+            return date.toLocaleDateString('id-ID');
+        }
+
+        // Format tanggal untuk input date
+        function formatTanggalInput(tanggal) {
+            if (!tanggal) return '';
+            
+            let date;
+            if (typeof tanggal.toDate === 'function') {
+                date = tanggal.toDate();
+            } else if (tanggal instanceof Date) {
+                date = tanggal;
+            } else {
+                date = new Date(tanggal);
+            }
+            
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Format angka dengan 1 digit desimal
+        function formatAngka(angka) {
+            if (!angka && angka !== 0) return '';
+            return parseFloat(angka).toFixed(1);
+        }
+
+        // Fungsi untuk menambah data
+        function tambahData() {
+            document.getElementById('dataForm').reset();
+            document.getElementById('recordId').value = '';
+            document.getElementById('dataModalLabel').textContent = 'Tambah Data Rekording';
+            
+            // Set nilai default
+            document.getElementById('unggul').value = 1500;
+            document.getElementById('tanggal').valueAsDate = new Date();
+            hitungSemua();
+            
+            const modal = new bootstrap.Modal(document.getElementById('dataModal'));
+            modal.show();
+        }
+
+        // Fungsi untuk mengubah data
+        async function ubahData(id) {
+            try {
+                let data;
+                
+                if (id.startsWith('local_')) {
+                    // Ambil data lokal
+                    data = dataRekording.find(item => item.id === id);
+                } else {
+                    // Ambil data dari Firebase
+                    const docRef = doc(db, "rekording_ayam", id);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        data = docSnap.data();
+                    }
+                }
+                
+                if (data) {
+                    document.getElementById('recordId').value = id;
+                    document.getElementById('minggu').value = data.minggu || '';
+                    document.getElementById('hari').value = data.hari || '';
+                    document.getElementById('tanggal').value = formatTanggalInput(data.tanggal) || '';
+                    document.getElementById('unggul').value = data.unggul || '';
+                    document.getElementById('mati').value = data.mati || '';
+                    document.getElementById('sisa').value = data.sisa || '';
+                    document.getElementById('pakanKg').value = data.pakanKg || '';
+                    document.getElementById('pakanFi').value = formatAngka(data.pakanFi) || '';
+                    document.getElementById('telurKg').value = data.telurKg || '';
+                    document.getElementById('telurButir').value = data.telurButir || '';
+                    document.getElementById('persenHD').value = formatAngka(data.persenHD) || '';
+                    document.getElementById('rusak').value = data.rusak || '';
+                    document.getElementById('keterangan').value = data.keterangan || '';
+                    
+                    document.getElementById('dataModalLabel').textContent = 'Ubah Data Rekording';
+                    
+                    const modal = new bootstrap.Modal(document.getElementById('dataModal'));
+                    modal.show();
+                } else {
+                    alert('Data tidak ditemukan!');
+                }
+            } catch (error) {
+                console.error("Error mengambil data untuk diubah: ", error);
+                alert('Terjadi kesalahan saat mengambil data!');
+            }
+        }
+
+        // Fungsi untuk menghapus data
+        async function hapusData(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                const berhasil = await hapusDataRekording(id);
+                if (berhasil) {
+                    alert('Data berhasil dihapus!');
+                    muatData();
+                } else {
+                    alert('Terjadi kesalahan saat menghapus data!');
+                }
+            }
+        }
+
+        // Fungsi untuk menyimpan data (tambah atau ubah)
+        async function simpanData() {
+            const id = document.getElementById('recordId').value;
+            
+            // Validasi form
+            const minggu = document.getElementById('minggu').value;
+            const hari = document.getElementById('hari').value;
+            const tanggal = document.getElementById('tanggal').value;
+            
+            if (!minggu || !hari || !tanggal) {
+                alert('Harap lengkapi semua field yang wajib diisi!');
+                return;
+            }
+            
+            // Hitung nilai otomatis
+            const unggul = parseInt(document.getElementById('unggul').value) || 0;
+            const mati = parseInt(document.getElementById('mati').value) || 0;
+            const sisa = unggul - mati;
+            const pakanFi = hitungFi(
+                parseFloat(document.getElementById('pakanKg').value) || 0,
+                sisa
+            );
+            const persenHD = hitungPersenHD(
+                parseInt(document.getElementById('telurButir').value) || 0,
+                sisa
+            );
+            
+            const data = {
+                minggu: parseInt(minggu) || 0,
+                hari: hari,
+                tanggal: new Date(tanggal),
+                unggul: unggul,
+                mati: mati,
+                sisa: sisa,
+                pakanKg: parseFloat(document.getElementById('pakanKg').value) || 0,
+                pakanFi: pakanFi,
+                telurKg: parseFloat(document.getElementById('telurKg').value) || 0,
+                telurButir: parseInt(document.getElementById('telurButir').value) || 0,
+                persenHD: persenHD,
+                rusak: parseInt(document.getElementById('rusak').value) || 0,
+                keterangan: document.getElementById('keterangan').value
+            };
+
+            let berhasil = false;
+            
+            if (id) {
+                // Ubah data
+                berhasil = await ubahDataRekording(id, data);
+            } else {
+                // Tambah data
+                berhasil = await tambahDataRekording(data);
+            }
+
+            if (berhasil) {
+                alert(`Data berhasil ${id ? 'diubah' : 'ditambahkan'}!`);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('dataModal'));
+                modal.hide();
+                muatData();
+            } else {
+                alert(`Terjadi kesalahan saat ${id ? 'mengubah' : 'menambahkan'} data!`);
+            }
+        }
+
+        // Fungsi untuk mencetak PDF
+        function cetakPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('l', 'mm', 'a4');
+            
+            // Judul
+            doc.setFontSize(16);
+            doc.text('REKORDING HARIAN AYAM PETELUR', 105, 15, { align: 'center' });
+            doc.setFontSize(12);
+            doc.text('"BUMDES CIPTA MANDIRI SEJAHTERA"', 105, 22, { align: 'center' });
+            doc.text('Tanggal masuk : 23 Agustus 2025', 105, 29, { align: 'center' });
+            doc.text('Populasi : 1.500', 105, 36, { align: 'center' });
+            
+            // Ambil elemen tabel
+            const table = document.querySelector('.table');
+            
+            // Konversi tabel ke gambar menggunakan html2canvas
+            html2canvas(table).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = 280; // Lebar gambar di PDF
+                const pageHeight = 190; // Tinggi halaman PDF
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                
+                let heightLeft = imgHeight;
+                let position = 45; // Posisi awal gambar
+                
+                // Tambah halaman pertama
+                doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+                
+                // Tambah halaman tambahan jika diperlukan
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight + 15;
+                    doc.addPage();
+                    doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+                
+                // Simpan PDF
+                doc.save('rekording_ayam_petelur.pdf');
+            });
+        }
+
+        // Fungsi untuk share ke WhatsApp
+        function shareWhatsApp() {
+            // Ambil data untuk dibagikan
+            const dataRows = document.querySelectorAll('#tableBody tr');
+            let message = "REKORDING HARIAN AYAM PETELUR\nBUMDES CIPTA MANDIRI SEJAHTERA\n\n";
+            
+            // Tambahkan beberapa baris data ke pesan
+            dataRows.forEach((row, index) => {
+                if (index < 5) { // Batasi hanya 5 baris pertama
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length > 8) {
+                        message += `${cells[0].textContent} ${cells[1].textContent} ${cells[2].textContent}: ${cells[8].textContent} butir telur\n`;
+                    }
+                }
+            });
+            
+            // Encode pesan untuk URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Buat URL WhatsApp
+            const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+            
+            // Buka jendela baru untuk WhatsApp
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Fungsi untuk memperbarui statistik
+        function updateStats(data) {
+            if (data.length === 0) {
+                document.getElementById('today-production').textContent = '0';
+                document.getElementById('avg-fi').textContent = '0.0';
+                document.getElementById('avg-hd').textContent = '0.0';
+                return;
+            }
+            
+            // Data terbaru (hari ini)
+            const todayData = data[data.length - 1];
+            document.getElementById('today-production').textContent = todayData.telurButir || '0';
+            
+            // Rata-rata Fi
+            const totalFi = data.reduce((sum, item) => sum + (item.pakanFi || 0), 0);
+            const avgFi = data.length > 0 ? totalFi / data.length : 0;
+            document.getElementById('avg-fi').textContent = avgFi.toFixed(1);
+            
+            // Rata-rata %HD
+            const totalHD = data.reduce((sum, item) => sum + (item.persenHD || 0), 0);
+            const avgHD = data.length > 0 ? totalHD / data.length : 0;
+            document.getElementById('avg-hd').textContent = avgHD.toFixed(1);
+        }
+
+        // Event listener saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            // Muat data dari Firestore
+            muatData();
+            
+            // Event listener untuk tombol tambah
+            document.getElementById('btnTambah').addEventListener('click', tambahData);
+            
+            // Event listener untuk tombol simpan di modal
+            document.getElementById('btnSimpan').addEventListener('click', simpanData);
+            
+            // Event listener untuk tombol cetak PDF
+            document.getElementById('btnCetak').addEventListener('click', cetakPDF);
+            
+            // Event listener untuk tombol share WhatsApp
+            document.getElementById('btnShare').addEventListener('click', shareWhatsApp);
+            
+            // Event listener untuk menghitung sisa populasi
+            document.getElementById('unggul').addEventListener('input', hitungSemua);
+            document.getElementById('mati').addEventListener('input', hitungSemua);
+            
+            // Event listener untuk menghitung Fi dan %HD
+            document.getElementById('pakanKg').addEventListener('input', hitungSemua);
+            document.getElementById('telurButir').addEventListener('input', hitungSemua);
+        });
+
+        // Fungsi untuk menghitung semua nilai otomatis
+        function hitungSemua() {
+            hitungSisa();
+            hitungFiOtomatis();
+            hitungPersenHDOtomatis();
+        }
+
+        // Fungsi untuk menghitung sisa populasi
+        function hitungSisa() {
+            const unggul = parseInt(document.getElementById('unggul').value) || 0;
+            const mati = parseInt(document.getElementById('mati').value) || 0;
+            document.getElementById('sisa').value = unggul - mati;
+        }
+
+        // Fungsi untuk menghitung Fi otomatis
+        function hitungFiOtomatis() {
+            const pakanKg = parseFloat(document.getElementById('pakanKg').value) || 0;
+            const sisa = parseInt(document.getElementById('sisa').value) || 0;
+            const fi = hitungFi(pakanKg, sisa);
+            document.getElementById('pakanFi').value = formatAngka(fi);
+        }
+
+        // Fungsi untuk menghitung %HD otomatis - DIPERBAIKI
+        function hitungPersenHDOtomatis() {
+            const telurButir = parseInt(document.getElementById('telurButir').value) || 0;
+            const sisa = parseInt(document.getElementById('sisa').value) || 0;
+            const persenHD = hitungPersenHD(telurButir, sisa);
+            document.getElementById('persenHD').value = formatAngka(persenHD);
+        }
+    </script>
+</body>
+</html>
