@@ -951,21 +951,50 @@
             });
         }
 
-        // Fungsi untuk share ke WhatsApp
+        // Fungsi untuk share ke WhatsApp - DIPERBAIKI
         function shareWhatsApp() {
-            // Ambil data untuk dibagikan
+            // Ambil semua data dari tabel
             const dataRows = document.querySelectorAll('#tableBody tr');
-            let message = "REKORDING HARIAN AYAM PETELUR\nBUMDES CIPTA MANDIRI SEJAHTERA\n\n";
             
-            // Tambahkan beberapa baris data ke pesan
-            dataRows.forEach((row, index) => {
-                if (index < 5) { // Batasi hanya 5 baris pertama
-                    const cells = row.querySelectorAll('td');
-                    if (cells.length > 8) {
-                        message += `${cells[0].textContent} ${cells[1].textContent} ${cells[2].textContent}: ${cells[8].textContent} butir telur\n`;
-                    }
+            // Buat header pesan
+            let message = "📊 REKORDING HARIAN AYAM PETELUR 🐔\n";
+            message += "BUMDES CIPTA MANDIRI SEJAHTERA\n\n";
+            message += "📅 Tanggal masuk: 23 Agustus 2025\n";
+            message += "🐓 Populasi awal: 1.500 ekor\n\n";
+            message += "📋 DATA REKORDING HARIAN:\n\n";
+            
+            // Tambahkan header tabel
+            message += "Minggu | Hari | Tanggal | Unggul | Mati | Sisa | Pakan (Kg) | Fi | Telur (Kg) | Telur (Butir) | %HD | Rusak | Keterangan\n";
+            message += "--------------------------------------------------------------------------------------------------------\n";
+            
+            // Tambahkan setiap baris data
+            dataRows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 12) {
+                    const minggu = cells[0].textContent || '-';
+                    const hari = cells[1].textContent || '-';
+                    const tanggal = cells[2].textContent || '-';
+                    const unggul = cells[3].textContent || '-';
+                    const mati = cells[4].textContent || '-';
+                    const sisa = cells[5].textContent || '-';
+                    const pakanKg = cells[6].textContent || '-';
+                    const fi = cells[7].textContent || '-';
+                    const telurKg = cells[8].textContent || '-';
+                    const telurButir = cells[9].textContent || '-';
+                    const hd = cells[10].textContent || '-';
+                    const rusak = cells[11].textContent || '-';
+                    const keterangan = cells[12].textContent || '-';
+                    
+                    message += `${minggu} | ${hari} | ${tanggal} | ${unggul} | ${mati} | ${sisa} | ${pakanKg} | ${fi} | ${telurKg} | ${telurButir} | ${hd} | ${rusak} | ${keterangan}\n`;
                 }
             });
+            
+            // Tambahkan statistik ringkasan
+            message += "\n📈 STATISTIK RINGKASAN:\n";
+            message += `🥚 Produksi hari ini: ${document.getElementById('today-production').textContent} butir\n`;
+            message += `🍽️ Rata-rata Fi: ${document.getElementById('avg-fi').textContent} g/ekor\n`;
+            message += `📊 Rata-rata %HD: ${document.getElementById('avg-hd').textContent}%\n\n`;
+            message += "📱 Dibagikan dari Sistem Rekording Ayam Petelur BUMDES CIPTA MANDIRI SEJAHTERA";
             
             // Encode pesan untuk URL
             const encodedMessage = encodeURIComponent(message);
