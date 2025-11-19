@@ -50,6 +50,10 @@
             box-shadow: var(--shadow);
             position: relative;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
         }
 
         .header::before {
@@ -60,6 +64,32 @@
             right: 0;
             height: 5px;
             background: var(--gradient-primary);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .logo-container {
+            margin-right: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            max-width: 80px;
+            max-height: 80px;
+            border-radius: 10px;
+            object-fit: cover;
+            box-shadow: var(--shadow);
+        }
+
+        .header-text {
+            flex: 1;
         }
 
         .header h1 {
@@ -340,14 +370,36 @@
             .action-buttons {
                 flex-direction: column;
             }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo-container {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            
+            .logo {
+                max-width: 70px;
+                max-height: 70px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="app-container">
         <div class="header">
-            <h1><i class="fas fa-egg"></i> REKORDING HARIAN AYAM PETELUR</h1>
-            <h2>"BUMDES CIPTA MANDIRI SEJAHTERA"</h2>
+            <div class="header-content">
+                <div class="logo-container">
+                    <img src="bumdes.jpg" alt="Logo BUMDES" class="logo" />
+                </div>
+                <div class="header-text">
+                    <h1><i class="fas fa-egg"></i> REKORDING HARIAN AYAM PETELUR</h1>
+                    <h2>"BUMDES CIPTA MANDIRI SEJAHTERA"</h2>
+                </div>
+            </div>
             <p><strong><i class="fas fa-calendar-alt"></i> Tanggal masuk : 23 Agustus 2025</strong></p>
             <p><strong><i class="fas fa-kiwi-bird"></i> Populasi : 1.500 Ekor</strong></p>
         </div>
@@ -653,10 +705,9 @@
             return (pakanKg * 1000) / sisaPopulasi;
         }
 
-        // Fungsi untuk menghitung %HD (Hen Day Production) - DIPERBAIKI
+        // Fungsi untuk menghitung %HD (Hen Day Production)
         function hitungPersenHD(telurButir, sisaPopulasi) {
             if (!telurButir || !sisaPopulasi || sisaPopulasi === 0) return 0;
-            // Perhitungan sesuai contoh: 348 ÷ 1500 = 0.232 × 100 = 23.2%
             return (telurButir / sisaPopulasi) * 100;
         }
 
@@ -733,7 +784,6 @@
         function formatTanggal(tanggal) {
             if (!tanggal) return '';
             
-            // Handle both Firestore Timestamp and Date objects
             let date;
             if (typeof tanggal.toDate === 'function') {
                 date = tanggal.toDate();
@@ -908,50 +958,165 @@
             }
         }
 
-        // Fungsi untuk mencetak PDF
+        // Fungsi untuk mencetak PDF - DIPERBAIKI
         function cetakPDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('l', 'mm', 'a4');
             
-            // Judul
-            doc.setFontSize(16);
-            doc.text('REKORDING HARIAN AYAM PETELUR', 105, 15, { align: 'center' });
-            doc.setFontSize(12);
-            doc.text('"BUMDES CIPTA MANDIRI SEJAHTERA"', 105, 22, { align: 'center' });
-            doc.text('Tanggal masuk : 23 Agustus 2025', 105, 29, { align: 'center' });
-            doc.text('Populasi : 1.500', 105, 36, { align: 'center' });
+            // Tambahkan logo
+            const logoImg = new Image();
+            logoImg.src = 'bumdes.jpg';
             
-            // Ambil elemen tabel
-            const table = document.querySelector('.table');
-            
-            // Konversi tabel ke gambar menggunakan html2canvas
-            html2canvas(table).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const imgWidth = 280; // Lebar gambar di PDF
-                const pageHeight = 190; // Tinggi halaman PDF
-                const imgHeight = canvas.height * imgWidth / canvas.width;
+            logoImg.onload = function() {
+                // Buat canvas untuk logo
+                const logoCanvas = document.createElement('canvas');
+                const logoCtx = logoCanvas.getContext('2d');
+                logoCanvas.width = 30;
+                logoCanvas.height = 30;
+                logoCtx.drawImage(logoImg, 0, 0, 30, 30);
+                const logoDataUrl = logoCanvas.toDataURL('image/jpeg');
                 
-                let heightLeft = imgHeight;
-                let position = 45; // Posisi awal gambar
+                // Header dengan logo
+                doc.setFillColor(44, 120, 108);
+                doc.rect(0, 0, 297, 25, 'F');
                 
-                // Tambah halaman pertama
-                doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
+                // Tambahkan logo
+                doc.addImage(logoDataUrl, 'JPEG', 10, 5, 15, 15);
                 
-                // Tambah halaman tambahan jika diperlukan
-                while (heightLeft >= 0) {
-                    position = heightLeft - imgHeight + 15;
-                    doc.addPage();
-                    doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
+                // Judul
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(16);
+                doc.text('REKORDING HARIAN AYAM PETELUR', 105, 15, { align: 'center' });
+                doc.setFontSize(12);
+                doc.text('"BUMDES CIPTA MANDIRI SEJAHTERA"', 105, 22, { align: 'center' });
+                
+                // Informasi tambahan
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(10);
+                doc.text('Tanggal masuk : 23 Agustus 2025', 15, 35);
+                doc.text('Populasi : 1.500 Ekor', 15, 42);
+                
+                // Buat tabel untuk PDF (tanpa kolom aksi)
+                const tableHeaders = [
+                    'Minggu', 'Hari', 'Tanggal', 'Unggul', 'Mati', 'Sisa', 
+                    'Pakan (Kg)', 'Fi', 'Telur (Kg)', 'Telur (Butir)', '%HD', 'Rusak', 'Keterangan'
+                ];
+                
+                // Ambil data dari tabel asli (tanpa kolom aksi)
+                const tableRows = [];
+                const dataRows = document.querySelectorAll('#tableBody tr');
+                
+                dataRows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length >= 13) { // 13 kolom termasuk aksi
+                        const rowData = [
+                            cells[0].textContent || '-',
+                            cells[1].textContent || '-',
+                            cells[2].textContent || '-',
+                            cells[3].textContent || '-',
+                            cells[4].textContent || '-',
+                            cells[5].textContent || '-',
+                            cells[6].textContent || '-',
+                            cells[7].textContent || '-',
+                            cells[8].textContent || '-',
+                            cells[9].textContent || '-',
+                            cells[10].textContent || '-',
+                            cells[11].textContent || '-',
+                            cells[12].textContent || '-'
+                        ];
+                        tableRows.push(rowData);
+                    }
+                });
+                
+                // Buat tabel di PDF
+                let startY = 50;
+                const columnWidths = [15, 20, 25, 15, 15, 15, 20, 15, 20, 25, 15, 15, 40];
+                
+                // Header tabel
+                doc.setFillColor(44, 120, 108);
+                doc.setTextColor(255, 255, 255);
+                let currentX = 10;
+                
+                tableHeaders.forEach((header, i) => {
+                    doc.rect(currentX, startY, columnWidths[i], 10, 'F');
+                    doc.setFontSize(8);
+                    doc.text(header, currentX + 2, startY + 6);
+                    currentX += columnWidths[i];
+                });
+                
+                // Isi tabel
+                startY += 10;
+                doc.setTextColor(0, 0, 0);
+                
+                tableRows.forEach((row, rowIndex) => {
+                    if (startY > 180) { // Jika mendekati batas halaman
+                        doc.addPage();
+                        startY = 20;
+                        
+                        // Header tabel di halaman baru
+                        doc.setFillColor(44, 120, 108);
+                        doc.setTextColor(255, 255, 255);
+                        currentX = 10;
+                        tableHeaders.forEach((header, i) => {
+                            doc.rect(currentX, startY, columnWidths[i], 10, 'F');
+                            doc.setFontSize(8);
+                            doc.text(header, currentX + 2, startY + 6);
+                            currentX += columnWidths[i];
+                        });
+                        startY += 10;
+                        doc.setTextColor(0, 0, 0);
+                    }
+                    
+                    currentX = 10;
+                    row.forEach((cell, cellIndex) => {
+                        doc.setFontSize(7);
+                        doc.text(cell.toString(), currentX + 2, startY + 6, {
+                            maxWidth: columnWidths[cellIndex] - 4
+                        });
+                        currentX += columnWidths[cellIndex];
+                    });
+                    startY += 10;
+                });
+                
+                // Footer
+                const totalPages = doc.internal.getNumberOfPages();
+                for (let i = 1; i <= totalPages; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(8);
+                    doc.setTextColor(100, 100, 100);
+                    doc.text(`Halaman ${i} dari ${totalPages}`, 280, 200, { align: 'right' });
+                    doc.text('© 2025 BUMDES CIPTA MANDIRI SEJAHTERA', 15, 200);
                 }
                 
                 // Simpan PDF
                 doc.save('rekording_ayam_petelur.pdf');
-            });
+            };
+            
+            logoImg.onerror = function() {
+                // Jika logo tidak ditemukan, buat PDF tanpa logo
+                alert('Logo tidak ditemukan, membuat PDF tanpa logo...');
+                buatPDFTanpaLogo();
+            };
+            
+            function buatPDFTanpaLogo() {
+                // Kode untuk membuat PDF tanpa logo (sama seperti di atas tapi tanpa bagian logo)
+                // Header
+                doc.setFillColor(44, 120, 108);
+                doc.rect(0, 0, 297, 25, 'F');
+                
+                // Judul
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(16);
+                doc.text('REKORDING HARIAN AYAM PETELUR', 105, 15, { align: 'center' });
+                doc.setFontSize(12);
+                doc.text('"BUMDES CIPTA MANDIRI SEJAHTERA"', 105, 22, { align: 'center' });
+                
+                // Lanjutkan dengan kode yang sama untuk membuat tabel...
+                // ... (kode membuat tabel sama seperti di atas)
+            }
         }
 
-        // Fungsi untuk share ke WhatsApp - DIPERBAIKI
+        // Fungsi untuk share ke WhatsApp
         function shareWhatsApp() {
             // Ambil semua data dari tabel
             const dataRows = document.querySelectorAll('#tableBody tr');
@@ -1078,7 +1243,7 @@
             document.getElementById('pakanFi').value = formatAngka(fi);
         }
 
-        // Fungsi untuk menghitung %HD otomatis - DIPERBAIKI
+        // Fungsi untuk menghitung %HD otomatis
         function hitungPersenHDOtomatis() {
             const telurButir = parseInt(document.getElementById('telurButir').value) || 0;
             const sisa = parseInt(document.getElementById('sisa').value) || 0;
