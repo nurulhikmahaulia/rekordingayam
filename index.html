@@ -11,7 +11,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* CSS yang sama seperti sebelumnya */
         :root {
             --primary: #2c786c;
             --secondary: #ff9800;
@@ -82,10 +81,10 @@
         }
 
         .logo {
-            max-width: 80px;
-            max-height: 80px;
+            width: 80px;
+            height: 80px;
             border-radius: 10px;
-            object-fit: cover;
+            object-fit: contain;
             box-shadow: var(--shadow);
         }
 
@@ -383,8 +382,8 @@
             }
             
             .logo {
-                max-width: 70px;
-                max-height: 70px;
+                width: 70px;
+                height: 70px;
             }
         }
     </style>
@@ -972,380 +971,107 @@
             doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
             doc.rect(0, 0, 297, 25, 'F');
             
-            // Logo di kiri atas - menggunakan SVG vector untuk kualitas terbaik
-            const logoSvg = `
-                <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="100" height="100" fill="#2c786c" rx="10"/>
-                    <circle cx="50" cy="40" r="20" fill="white"/>
-                    <path d="M30 70 L50 50 L70 70 Z" fill="white"/>
-                    <text x="50" y="85" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">BUMDES</text>
-                </svg>
-            `;
+            // Judul utama
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.text('REKORDING HARIAN AYAM PETELUR', 148, 10, { align: 'center' });
             
-            // Konversi SVG ke data URL
-            const svgBlob = new Blob([logoSvg], { type: 'image/svg+xml;charset=utf-8' });
-            const svgUrl = URL.createObjectURL(svgBlob);
+            // Subjudul
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text('"BUMDES CIPTA MANDIRI SEJAHTERA"', 148, 16, { align: 'center' });
             
-            const logoImg = new Image();
-            logoImg.onload = function() {
-                // Tambahkan logo di kiri atas dengan kualitas tinggi
-                doc.addImage(logoImg, 'PNG', 10, 3, 18, 18);
-                
-                // Judul utama
-                doc.setTextColor(255, 255, 255);
-                doc.setFontSize(16);
-                doc.setFont('helvetica', 'bold');
-                doc.text('REKORDING HARIAN AYAM PETELUR', 148, 10, { align: 'center' });
-                
-                // Subjudul
-                doc.setFontSize(10);
-                doc.setFont('helvetica', 'normal');
-                doc.text('"BUMDES CIPTA MANDIRI SEJAHTERA"', 148, 16, { align: 'center' });
-                
-                // Informasi tambahan
-                doc.setTextColor(0, 0, 0);
-                doc.setFontSize(9);
-                doc.text('Tanggal masuk : 23 Agustus 2025', 15, 35);
-                doc.text('Populasi : 1.500 Ekor', 15, 41);
-                
-                // Siapkan data untuk tabel
-                const tableHeaders = [
-                    ['Minggu', 'Hari', 'Tanggal', 'Unggul', 'Mati', 'Sisa', 'Pakan (Kg)', 'Fi', 'Telur (Kg)', 'Telur (Butir)', '%HD', 'Rusak', 'Keterangan']
-                ];
-                
-                const tableRows = [];
-                const dataRows = document.querySelectorAll('#tableBody tr');
-                
-                dataRows.forEach(row => {
-                    const cells = row.querySelectorAll('td');
-                    if (cells.length >= 13) {
-                        const rowData = [
-                            cells[0].textContent || '-',
-                            cells[1].textContent || '-',
-                            cells[2].textContent || '-',
-                            cells[3].textContent || '-',
-                            cells[4].textContent || '-',
-                            cells[5].textContent || '-',
-                            cells[6].textContent || '-',
-                            cells[7].textContent || '-',
-                            cells[8].textContent || '-',
-                            cells[9].textContent || '-',
-                            cells[10].textContent || '-',
-                            cells[11].textContent || '-',
-                            cells[12].textContent || '-'
-                        ];
-                        tableRows.push(rowData);
-                    }
-                });
-                
-                // Buat tabel menggunakan autoTable
-                doc.autoTable({
-                    head: tableHeaders,
-                    body: tableRows,
-                    startY: 48,
-                    theme: 'grid',
-                    styles: {
-                        fontSize: 7,
-                        cellPadding: 2,
-                        overflow: 'linebreak',
-                        lineColor: [200, 200, 200],
-                        lineWidth: 0.1
-                    },
-                    headStyles: {
-                        fillColor: primaryColor,
-                        textColor: 255,
-                        fontStyle: 'bold',
-                        halign: 'center',
-                        fontSize: 8
-                    },
-                    alternateRowStyles: {
-                        fillColor: lightColor
-                    },
-                    columnStyles: {
-                        0: { cellWidth: 12, halign: 'center' },
-                        1: { cellWidth: 12, halign: 'center' },
-                        2: { cellWidth: 18, halign: 'center' },
-                        3: { cellWidth: 12, halign: 'center' },
-                        4: { cellWidth: 12, halign: 'center' },
-                        5: { cellWidth: 12, halign: 'center' },
-                        6: { cellWidth: 15, halign: 'center' },
-                        7: { cellWidth: 12, halign: 'center' },
-                        8: { cellWidth: 15, halign: 'center' },
-                        9: { cellWidth: 18, halign: 'center' },
-                        10: { cellWidth: 12, halign: 'center' },
-                        11: { cellWidth: 12, halign: 'center' },
-                        12: { cellWidth: 35, halign: 'left' }
-                    },
-                    margin: { top: 48 },
-                    tableLineWidth: 0.1,
-                    tableLineColor: [200, 200, 200]
-                });
-                
-                // Footer hak cipta
-                const finalY = doc.lastAutoTable.finalY + 5;
-                doc.setTextColor(100, 100, 100);
-                doc.setFontSize(7);
-                doc.text('© 2025 BUMDES CIPTA MANDIRI SEJAHTERA - Sistem Rekording Ayam Petelur', 148, finalY, { align: 'center' });
-                
-                // Nomor halaman
-                const totalPages = doc.internal.getNumberOfPages();
-                for (let i = 1; i <= totalPages; i++) {
-                    doc.setPage(i);
-                    doc.setFontSize(7);
-                    doc.text(`Halaman ${i} dari ${totalPages}`, 280, 200, { align: 'right' });
+            // Informasi tambahan
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(9);
+            doc.text('Tanggal masuk : 23 Agustus 2025', 15, 32);
+            doc.text('Populasi : 1.500 Ekor', 15, 38);
+            
+            // Siapkan data untuk tabel
+            const tableHeaders = [
+                ['Minggu', 'Hari', 'Tanggal', 'Unggul', 'Mati', 'Sisa', 'Pakan (Kg)', 'Fi', 'Telur (Kg)', 'Telur (Butir)', '%HD', 'Rusak', 'Keterangan']
+            ];
+            
+            const tableRows = [];
+            const dataRows = document.querySelectorAll('#tableBody tr');
+            
+            dataRows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 13) {
+                    const rowData = [
+                        cells[0].textContent || '-',
+                        cells[1].textContent || '-',
+                        cells[2].textContent || '-',
+                        cells[3].textContent || '-',
+                        cells[4].textContent || '-',
+                        cells[5].textContent || '-',
+                        cells[6].textContent || '-',
+                        cells[7].textContent || '-',
+                        cells[8].textContent || '-',
+                        cells[9].textContent || '-',
+                        cells[10].textContent || '-',
+                        cells[11].textContent || '-',
+                        cells[12].textContent || '-'
+                    ];
+                    tableRows.push(rowData);
                 }
-                
-                // Simpan PDF
-                doc.save(`Rekording_Ayam_Petelur_${new Date().toISOString().slice(0, 10)}.pdf`);
-                
-                // Bersihkan URL
-                URL.revokeObjectURL(svgUrl);
-            };
+            });
             
-            logoImg.src = svgUrl;
+            // Buat tabel menggunakan autoTable
+            doc.autoTable({
+                head: tableHeaders,
+                body: tableRows,
+                startY: 45,
+                theme: 'grid',
+                styles: {
+                    fontSize: 7,
+                    cellPadding: 2,
+                    overflow: 'linebreak'
+                },
+                headStyles: {
+                    fillColor: primaryColor,
+                    textColor: 255,
+                    fontStyle: 'bold',
+                    halign: 'center'
+                },
+                alternateRowStyles: {
+                    fillColor: lightColor
+                },
+                columnStyles: {
+                    0: { cellWidth: 12, halign: 'center' },
+                    1: { cellWidth: 12, halign: 'center' },
+                    2: { cellWidth: 18, halign: 'center' },
+                    3: { cellWidth: 12, halign: 'center' },
+                    4: { cellWidth: 12, halign: 'center' },
+                    5: { cellWidth: 12, halign: 'center' },
+                    6: { cellWidth: 15, halign: 'center' },
+                    7: { cellWidth: 12, halign: 'center' },
+                    8: { cellWidth: 15, halign: 'center' },
+                    9: { cellWidth: 18, halign: 'center' },
+                    10: { cellWidth: 12, halign: 'center' },
+                    11: { cellWidth: 12, halign: 'center' },
+                    12: { cellWidth: 35, halign: 'left' }
+                },
+                margin: { top: 45 }
+            });
             
-            logoImg.onerror = function() {
-                // Jika logo SVG gagal, coba gunakan logo dari file
-                console.log('Logo SVG gagal, mencoba logo dari file...');
-                const logoFileImg = new Image();
-                logoFileImg.crossOrigin = 'anonymous';
-                logoFileImg.onload = function() {
-                    // Tambahkan logo dengan kualitas tinggi
-                    const canvas = document.createElement('canvas');
-                    canvas.width = 100;
-                    canvas.height = 100;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(logoFileImg, 0, 0, 100, 100);
-                    const logoDataUrl = canvas.toDataURL('image/png', 1.0);
-                    doc.addImage(logoDataUrl, 'PNG', 10, 3, 18, 18);
-                    
-                    // Lanjutkan dengan kode yang sama...
-                    buatPDFDenganLogo();
-                };
-                logoFileImg.onerror = function() {
-                    console.log('Logo file juga gagal, membuat PDF tanpa logo...');
-                    buatPDFTanpaLogo();
-                };
-                logoFileImg.src = 'bumdes.jpg';
-            };
+            // Footer hak cipta
+            const finalY = doc.lastAutoTable.finalY + 5;
+            doc.setTextColor(100, 100, 100);
+            doc.setFontSize(7);
+            doc.text('© 2025 BUMDES CIPTA MANDIRI SEJAHTERA - Sistem Rekording Ayam Petelur', 148, finalY, { align: 'center' });
             
-            function buatPDFDenganLogo() {
-                // Judul utama
-                doc.setTextColor(255, 255, 255);
-                doc.setFontSize(16);
-                doc.setFont('helvetica', 'bold');
-                doc.text('REKORDING HARIAN AYAM PETELUR', 148, 10, { align: 'center' });
-                
-                // Subjudul
-                doc.setFontSize(10);
-                doc.setFont('helvetica', 'normal');
-                doc.text('"BUMDES CIPTA MANDIRI SEJAHTERA"', 148, 16, { align: 'center' });
-                
-                // Informasi tambahan
-                doc.setTextColor(0, 0, 0);
-                doc.setFontSize(9);
-                doc.text('Tanggal masuk : 23 Agustus 2025', 15, 35);
-                doc.text('Populasi : 1.500 Ekor', 15, 41);
-                
-                // Siapkan data untuk tabel
-                const tableHeaders = [
-                    ['Minggu', 'Hari', 'Tanggal', 'Unggul', 'Mati', 'Sisa', 'Pakan (Kg)', 'Fi', 'Telur (Kg)', 'Telur (Butir)', '%HD', 'Rusak', 'Keterangan']
-                ];
-                
-                const tableRows = [];
-                const dataRows = document.querySelectorAll('#tableBody tr');
-                
-                dataRows.forEach(row => {
-                    const cells = row.querySelectorAll('td');
-                    if (cells.length >= 13) {
-                        const rowData = [
-                            cells[0].textContent || '-',
-                            cells[1].textContent || '-',
-                            cells[2].textContent || '-',
-                            cells[3].textContent || '-',
-                            cells[4].textContent || '-',
-                            cells[5].textContent || '-',
-                            cells[6].textContent || '-',
-                            cells[7].textContent || '-',
-                            cells[8].textContent || '-',
-                            cells[9].textContent || '-',
-                            cells[10].textContent || '-',
-                            cells[11].textContent || '-',
-                            cells[12].textContent || '-'
-                        ];
-                        tableRows.push(rowData);
-                    }
-                });
-                
-                // Buat tabel menggunakan autoTable
-                doc.autoTable({
-                    head: tableHeaders,
-                    body: tableRows,
-                    startY: 48,
-                    theme: 'grid',
-                    styles: {
-                        fontSize: 7,
-                        cellPadding: 2,
-                        overflow: 'linebreak',
-                        lineColor: [200, 200, 200],
-                        lineWidth: 0.1
-                    },
-                    headStyles: {
-                        fillColor: primaryColor,
-                        textColor: 255,
-                        fontStyle: 'bold',
-                        halign: 'center',
-                        fontSize: 8
-                    },
-                    alternateRowStyles: {
-                        fillColor: lightColor
-                    },
-                    columnStyles: {
-                        0: { cellWidth: 12, halign: 'center' },
-                        1: { cellWidth: 12, halign: 'center' },
-                        2: { cellWidth: 18, halign: 'center' },
-                        3: { cellWidth: 12, halign: 'center' },
-                        4: { cellWidth: 12, halign: 'center' },
-                        5: { cellWidth: 12, halign: 'center' },
-                        6: { cellWidth: 15, halign: 'center' },
-                        7: { cellWidth: 12, halign: 'center' },
-                        8: { cellWidth: 15, halign: 'center' },
-                        9: { cellWidth: 18, halign: 'center' },
-                        10: { cellWidth: 12, halign: 'center' },
-                        11: { cellWidth: 12, halign: 'center' },
-                        12: { cellWidth: 35, halign: 'left' }
-                    },
-                    margin: { top: 48 },
-                    tableLineWidth: 0.1,
-                    tableLineColor: [200, 200, 200]
-                });
-                
-                // Footer hak cipta
-                const finalY = doc.lastAutoTable.finalY + 5;
-                doc.setTextColor(100, 100, 100);
+            // Nomor halaman
+            const totalPages = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= totalPages; i++) {
+                doc.setPage(i);
                 doc.setFontSize(7);
-                doc.text('© 2025 BUMDES CIPTA MANDIRI SEJAHTERA - Sistem Rekording Ayam Petelur', 148, finalY, { align: 'center' });
-                
-                // Nomor halaman
-                const totalPages = doc.internal.getNumberOfPages();
-                for (let i = 1; i <= totalPages; i++) {
-                    doc.setPage(i);
-                    doc.setFontSize(7);
-                    doc.text(`Halaman ${i} dari ${totalPages}`, 280, 200, { align: 'right' });
-                }
-                
-                // Simpan PDF
-                doc.save(`Rekording_Ayam_Petelur_${new Date().toISOString().slice(0, 10)}.pdf`);
+                doc.text(`Halaman ${i} dari ${totalPages}`, 280, 200, { align: 'right' });
             }
             
-            function buatPDFTanpaLogo() {
-                // Judul utama
-                doc.setTextColor(255, 255, 255);
-                doc.setFontSize(16);
-                doc.setFont('helvetica', 'bold');
-                doc.text('REKORDING HARIAN AYAM PETELUR', 148, 10, { align: 'center' });
-                
-                // Subjudul
-                doc.setFontSize(10);
-                doc.setFont('helvetica', 'normal');
-                doc.text('"BUMDES CIPTA MANDIRI SEJAHTERA"', 148, 16, { align: 'center' });
-                
-                // Informasi tambahan
-                doc.setTextColor(0, 0, 0);
-                doc.setFontSize(9);
-                doc.text('Tanggal masuk : 23 Agustus 2025', 15, 35);
-                doc.text('Populasi : 1.500 Ekor', 15, 41);
-                
-                // Siapkan data untuk tabel
-                const tableHeaders = [
-                    ['Minggu', 'Hari', 'Tanggal', 'Unggul', 'Mati', 'Sisa', 'Pakan (Kg)', 'Fi', 'Telur (Kg)', 'Telur (Butir)', '%HD', 'Rusak', 'Keterangan']
-                ];
-                
-                const tableRows = [];
-                const dataRows = document.querySelectorAll('#tableBody tr');
-                
-                dataRows.forEach(row => {
-                    const cells = row.querySelectorAll('td');
-                    if (cells.length >= 13) {
-                        const rowData = [
-                            cells[0].textContent || '-',
-                            cells[1].textContent || '-',
-                            cells[2].textContent || '-',
-                            cells[3].textContent || '-',
-                            cells[4].textContent || '-',
-                            cells[5].textContent || '-',
-                            cells[6].textContent || '-',
-                            cells[7].textContent || '-',
-                            cells[8].textContent || '-',
-                            cells[9].textContent || '-',
-                            cells[10].textContent || '-',
-                            cells[11].textContent || '-',
-                            cells[12].textContent || '-'
-                        ];
-                        tableRows.push(rowData);
-                    }
-                });
-                
-                // Buat tabel menggunakan autoTable
-                doc.autoTable({
-                    head: tableHeaders,
-                    body: tableRows,
-                    startY: 48,
-                    theme: 'grid',
-                    styles: {
-                        fontSize: 7,
-                        cellPadding: 2,
-                        overflow: 'linebreak',
-                        lineColor: [200, 200, 200],
-                        lineWidth: 0.1
-                    },
-                    headStyles: {
-                        fillColor: primaryColor,
-                        textColor: 255,
-                        fontStyle: 'bold',
-                        halign: 'center',
-                        fontSize: 8
-                    },
-                    alternateRowStyles: {
-                        fillColor: lightColor
-                    },
-                    columnStyles: {
-                        0: { cellWidth: 12, halign: 'center' },
-                        1: { cellWidth: 12, halign: 'center' },
-                        2: { cellWidth: 18, halign: 'center' },
-                        3: { cellWidth: 12, halign: 'center' },
-                        4: { cellWidth: 12, halign: 'center' },
-                        5: { cellWidth: 12, halign: 'center' },
-                        6: { cellWidth: 15, halign: 'center' },
-                        7: { cellWidth: 12, halign: 'center' },
-                        8: { cellWidth: 15, halign: 'center' },
-                        9: { cellWidth: 18, halign: 'center' },
-                        10: { cellWidth: 12, halign: 'center' },
-                        11: { cellWidth: 12, halign: 'center' },
-                        12: { cellWidth: 35, halign: 'left' }
-                    },
-                    margin: { top: 48 },
-                    tableLineWidth: 0.1,
-                    tableLineColor: [200, 200, 200]
-                });
-                
-                // Footer hak cipta
-                const finalY = doc.lastAutoTable.finalY + 5;
-                doc.setTextColor(100, 100, 100);
-                doc.setFontSize(7);
-                doc.text('© 2025 BUMDES CIPTA MANDIRI SEJAHTERA - Sistem Rekording Ayam Petelur', 148, finalY, { align: 'center' });
-                
-                // Nomor halaman
-                const totalPages = doc.internal.getNumberOfPages();
-                for (let i = 1; i <= totalPages; i++) {
-                    doc.setPage(i);
-                    doc.setFontSize(7);
-                    doc.text(`Halaman ${i} dari ${totalPages}`, 280, 200, { align: 'right' });
-                }
-                
-                // Simpan PDF
-                doc.save(`Rekording_Ayam_Petelur_${new Date().toISOString().slice(0, 10)}.pdf`);
-            }
+            // Simpan PDF
+            doc.save(`Rekording_Ayam_Petelur_${new Date().toISOString().slice(0, 10)}.pdf`);
         }
 
         // Fungsi untuk share ke WhatsApp
