@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -958,162 +959,151 @@
             }
         }
 
-        // Fungsi untuk mencetak PDF - DIPERBAIKI
+        // Fungsi untuk mencetak PDF - YANG DIPERBAIKI
         function cetakPDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('l', 'mm', 'a4');
             
-            // Tambahkan logo
-            const logoImg = new Image();
-            logoImg.src = 'bumdes.jpg';
+            // Warna tema
+            const primaryColor = [44, 120, 108];
+            const secondaryColor = [255, 152, 0];
+            const lightColor = [248, 249, 250];
             
-            logoImg.onload = function() {
-                // Buat canvas untuk logo
-                const logoCanvas = document.createElement('canvas');
-                const logoCtx = logoCanvas.getContext('2d');
-                logoCanvas.width = 30;
-                logoCanvas.height = 30;
-                logoCtx.drawImage(logoImg, 0, 0, 30, 30);
-                const logoDataUrl = logoCanvas.toDataURL('image/jpeg');
-                
-                // Header dengan logo
-                doc.setFillColor(44, 120, 108);
-                doc.rect(0, 0, 297, 25, 'F');
-                
-                // Tambahkan logo
-                doc.addImage(logoDataUrl, 'JPEG', 10, 5, 15, 15);
-                
-                // Judul
-                doc.setTextColor(255, 255, 255);
-                doc.setFontSize(16);
-                doc.text('REKORDING HARIAN AYAM PETELUR', 105, 15, { align: 'center' });
-                doc.setFontSize(12);
-                doc.text('"BUMDES CIPTA MANDIRI SEJAHTERA"', 105, 22, { align: 'center' });
-                
-                // Informasi tambahan
-                doc.setTextColor(0, 0, 0);
-                doc.setFontSize(10);
-                doc.text('Tanggal masuk : 23 Agustus 2025', 15, 35);
-                doc.text('Populasi : 1.500 Ekor', 15, 42);
-                
-                // Buat tabel untuk PDF (tanpa kolom aksi)
-                const tableHeaders = [
-                    'Minggu', 'Hari', 'Tanggal', 'Unggul', 'Mati', 'Sisa', 
-                    'Pakan (Kg)', 'Fi', 'Telur (Kg)', 'Telur (Butir)', '%HD', 'Rusak', 'Keterangan'
-                ];
-                
-                // Ambil data dari tabel asli (tanpa kolom aksi)
-                const tableRows = [];
-                const dataRows = document.querySelectorAll('#tableBody tr');
-                
-                dataRows.forEach(row => {
-                    const cells = row.querySelectorAll('td');
-                    if (cells.length >= 13) { // 13 kolom termasuk aksi
-                        const rowData = [
-                            cells[0].textContent || '-',
-                            cells[1].textContent || '-',
-                            cells[2].textContent || '-',
-                            cells[3].textContent || '-',
-                            cells[4].textContent || '-',
-                            cells[5].textContent || '-',
-                            cells[6].textContent || '-',
-                            cells[7].textContent || '-',
-                            cells[8].textContent || '-',
-                            cells[9].textContent || '-',
-                            cells[10].textContent || '-',
-                            cells[11].textContent || '-',
-                            cells[12].textContent || '-'
-                        ];
-                        tableRows.push(rowData);
-                    }
-                });
-                
-                // Buat tabel di PDF
-                let startY = 50;
-                const columnWidths = [15, 20, 25, 15, 15, 15, 20, 15, 20, 25, 15, 15, 40];
-                
-                // Header tabel
-                doc.setFillColor(44, 120, 108);
-                doc.setTextColor(255, 255, 255);
-                let currentX = 10;
-                
-                tableHeaders.forEach((header, i) => {
-                    doc.rect(currentX, startY, columnWidths[i], 10, 'F');
-                    doc.setFontSize(8);
-                    doc.text(header, currentX + 2, startY + 6);
-                    currentX += columnWidths[i];
-                });
-                
-                // Isi tabel
-                startY += 10;
-                doc.setTextColor(0, 0, 0);
-                
-                tableRows.forEach((row, rowIndex) => {
-                    if (startY > 180) { // Jika mendekati batas halaman
-                        doc.addPage();
-                        startY = 20;
-                        
-                        // Header tabel di halaman baru
-                        doc.setFillColor(44, 120, 108);
-                        doc.setTextColor(255, 255, 255);
-                        currentX = 10;
-                        tableHeaders.forEach((header, i) => {
-                            doc.rect(currentX, startY, columnWidths[i], 10, 'F');
-                            doc.setFontSize(8);
-                            doc.text(header, currentX + 2, startY + 6);
-                            currentX += columnWidths[i];
-                        });
-                        startY += 10;
-                        doc.setTextColor(0, 0, 0);
-                    }
-                    
-                    currentX = 10;
-                    row.forEach((cell, cellIndex) => {
-                        doc.setFontSize(7);
-                        doc.text(cell.toString(), currentX + 2, startY + 6, {
-                            maxWidth: columnWidths[cellIndex] - 4
-                        });
-                        currentX += columnWidths[cellIndex];
-                    });
-                    startY += 10;
-                });
-                
-                // Footer
-                const totalPages = doc.internal.getNumberOfPages();
-                for (let i = 1; i <= totalPages; i++) {
-                    doc.setPage(i);
-                    doc.setFontSize(8);
-                    doc.setTextColor(100, 100, 100);
-                    doc.text(`Halaman ${i} dari ${totalPages}`, 280, 200, { align: 'right' });
-                    doc.text('© 2025 BUMDES CIPTA MANDIRI SEJAHTERA', 15, 200);
+            // Header dengan background berwarna
+            doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+            doc.rect(0, 0, 297, 30, 'F');
+            
+            // Judul utama
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(18);
+            doc.setFont('helvetica', 'bold');
+            doc.text('REKORDING HARIAN AYAM PETELUR', 148, 12, { align: 'center' });
+            
+            // Subjudul
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'normal');
+            doc.text('"BUMDES CIPTA MANDIRI SEJAHTERA"', 148, 19, { align: 'center' });
+            
+            // Informasi tambahan
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(10);
+            doc.text('Tanggal masuk : 23 Agustus 2025', 15, 40);
+            doc.text('Populasi : 1.500 Ekor', 15, 47);
+            doc.text(`Dicetak pada: ${new Date().toLocaleDateString('id-ID')} ${new Date().toLocaleTimeString('id-ID')}`, 15, 54);
+            
+            // Statistik ringkasan
+            doc.setFillColor(lightColor[0], lightColor[1], lightColor[2]);
+            doc.rect(15, 60, 267, 15, 'F');
+            doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.text('STATISTIK RINGKASAN:', 20, 70);
+            
+            doc.setTextColor(0, 0, 0);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Produksi Hari Ini: ${document.getElementById('today-production').textContent} butir`, 80, 70);
+            doc.text(`Rata-rata Fi: ${document.getElementById('avg-fi').textContent} g/ekor`, 150, 70);
+            doc.text(`Rata-rata %HD: ${document.getElementById('avg-hd').textContent}%`, 220, 70);
+            
+            // Siapkan data untuk tabel
+            const tableHeaders = [
+                ['Minggu', 'Hari', 'Tanggal', 'Unggul', 'Mati', 'Sisa', 'Pakan (Kg)', 'Fi', 'Telur (Kg)', 'Telur (Butir)', '%HD', 'Rusak', 'Keterangan']
+            ];
+            
+            const tableRows = [];
+            const dataRows = document.querySelectorAll('#tableBody tr');
+            
+            dataRows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 13) {
+                    const rowData = [
+                        cells[0].textContent || '-',
+                        cells[1].textContent || '-',
+                        cells[2].textContent || '-',
+                        cells[3].textContent || '-',
+                        cells[4].textContent || '-',
+                        cells[5].textContent || '-',
+                        cells[6].textContent || '-',
+                        cells[7].textContent || '-',
+                        cells[8].textContent || '-',
+                        cells[9].textContent || '-',
+                        cells[10].textContent || '-',
+                        cells[11].textContent || '-',
+                        cells[12].textContent || '-'
+                    ];
+                    tableRows.push(rowData);
                 }
-                
-                // Simpan PDF
-                doc.save('rekording_ayam_petelur.pdf');
-            };
+            });
             
-            logoImg.onerror = function() {
-                // Jika logo tidak ditemukan, buat PDF tanpa logo
-                alert('Logo tidak ditemukan, membuat PDF tanpa logo...');
-                buatPDFTanpaLogo();
-            };
+            // Buat tabel menggunakan autoTable
+            doc.autoTable({
+                head: tableHeaders,
+                body: tableRows,
+                startY: 80,
+                theme: 'grid',
+                styles: {
+                    fontSize: 8,
+                    cellPadding: 3,
+                    overflow: 'linebreak'
+                },
+                headStyles: {
+                    fillColor: primaryColor,
+                    textColor: 255,
+                    fontStyle: 'bold',
+                    halign: 'center'
+                },
+                alternateRowStyles: {
+                    fillColor: lightColor
+                },
+                columnStyles: {
+                    0: { cellWidth: 15, halign: 'center' },
+                    1: { cellWidth: 15, halign: 'center' },
+                    2: { cellWidth: 20, halign: 'center' },
+                    3: { cellWidth: 15, halign: 'center' },
+                    4: { cellWidth: 15, halign: 'center' },
+                    5: { cellWidth: 15, halign: 'center' },
+                    6: { cellWidth: 18, halign: 'center' },
+                    7: { cellWidth: 15, halign: 'center' },
+                    8: { cellWidth: 18, halign: 'center' },
+                    9: { cellWidth: 20, halign: 'center' },
+                    10: { cellWidth: 15, halign: 'center' },
+                    11: { cellWidth: 15, halign: 'center' },
+                    12: { cellWidth: 40, halign: 'left' }
+                },
+                margin: { top: 80 }
+            });
             
-            function buatPDFTanpaLogo() {
-                // Kode untuk membuat PDF tanpa logo (sama seperti di atas tapi tanpa bagian logo)
-                // Header
-                doc.setFillColor(44, 120, 108);
-                doc.rect(0, 0, 297, 25, 'F');
-                
-                // Judul
-                doc.setTextColor(255, 255, 255);
-                doc.setFontSize(16);
-                doc.text('REKORDING HARIAN AYAM PETELUR', 105, 15, { align: 'center' });
-                doc.setFontSize(12);
-                doc.text('"BUMDES CIPTA MANDIRI SEJAHTERA"', 105, 22, { align: 'center' });
-                
-                // Lanjutkan dengan kode yang sama untuk membuat tabel...
-                // ... (kode membuat tabel sama seperti di atas)
+            // Footer
+            const finalY = doc.lastAutoTable.finalY + 10;
+            
+            // Informasi rumus perhitungan
+            doc.setFillColor(lightColor[0], lightColor[1], lightColor[2]);
+            doc.rect(15, finalY, 267, 20, 'F');
+            doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'bold');
+            doc.text('RUMUS PERHITUNGAN:', 20, finalY + 7);
+            
+            doc.setTextColor(0, 0, 0);
+            doc.setFont('helvetica', 'normal');
+            doc.text('Fi (Feed Intake) = (Pakan (Kg) × 1000) / Sisa Populasi (dalam gram/ekor)', 20, finalY + 13);
+            doc.text('%HD (Hen Day Production) = (Telur Butir / Sisa Populasi) × 100', 20, finalY + 19);
+            
+            // Footer hak cipta
+            doc.setTextColor(100, 100, 100);
+            doc.setFontSize(8);
+            doc.text('© 2025 BUMDES CIPTA MANDIRI SEJAHTERA - Sistem Rekording Ayam Petelur', 148, 200, { align: 'center' });
+            
+            // Nomor halaman
+            const totalPages = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= totalPages; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.text(`Halaman ${i} dari ${totalPages}`, 280, 200, { align: 'right' });
             }
+            
+            // Simpan PDF
+            doc.save(`Rekording_Ayam_Petelur_${new Date().toISOString().slice(0, 10)}.pdf`);
         }
 
         // Fungsi untuk share ke WhatsApp
