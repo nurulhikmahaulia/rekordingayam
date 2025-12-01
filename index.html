@@ -1031,8 +1031,8 @@
 doc.autoTable({
     head: tableHeaders,
     body: tableRows,
-    startY: 100,
-    startX: 20,  // Geser tabel 20mm dari kiri
+    startY: 45,
+    startX: 500,  // Geser tabel 20mm dari kiri
     theme: 'grid',
     styles: {
         fontSize: 7,
@@ -1063,7 +1063,7 @@ doc.autoTable({
         11: { cellWidth: 12, halign: 'center' },
         12: { cellWidth: 35, halign: 'left' }
     },
-    margin: { top: 100 }
+    margin: { top: 45 }
 });
                 // Footer hak cipta
                 const finalY = doc.lastAutoTable.finalY + 5;
