@@ -1027,44 +1027,44 @@
                     }
                 });
                 
-            // Buat tabel menggunakan autoTable
-doc.autoTable({
-    head: tableHeaders,
-    body: tableRows,
-    startY: 45,
-    startX: 500,  // Geser tabel 20mm dari kiri
-    theme: 'grid',
-    styles: {
-        fontSize: 7,
-        cellPadding: 2,
-        overflow: 'linebreak'
-    },
-    headStyles: {
-        fillColor: primaryColor,
-        textColor: 255,
-        fontStyle: 'bold',
-        halign: 'center'
-    },
-    alternateRowStyles: {
-        fillColor: lightColor
-    },
-    columnStyles: {
-        0: { cellWidth: 12, halign: 'center' },
-        1: { cellWidth: 12, halign: 'center' },
-        2: { cellWidth: 18, halign: 'center' },
-        3: { cellWidth: 12, halign: 'center' },
-        4: { cellWidth: 12, halign: 'center' },
-        5: { cellWidth: 12, halign: 'center' },
-        6: { cellWidth: 15, halign: 'center' },
-        7: { cellWidth: 12, halign: 'center' },
-        8: { cellWidth: 15, halign: 'center' },
-        9: { cellWidth: 18, halign: 'center' },
-        10: { cellWidth: 12, halign: 'center' },
-        11: { cellWidth: 12, halign: 'center' },
-        12: { cellWidth: 35, halign: 'left' }
-    },
-    margin: { top: 45 }
-});
+                // Buat tabel menggunakan autoTable
+                doc.autoTable({
+                    head: tableHeaders,
+                    body: tableRows,
+                    startY: 45,
+                    theme: 'grid',
+                    styles: {
+                        fontSize: 7,
+                        cellPadding: 2,
+                        overflow: 'linebreak'
+                    },
+                    headStyles: {
+                        fillColor: primaryColor,
+                        textColor: 255,
+                        fontStyle: 'bold',
+                        halign: 'center'
+                    },
+                    alternateRowStyles: {
+                        fillColor: lightColor
+                    },
+                    columnStyles: {
+                        0: { cellWidth: 12, halign: 'center' },
+                        1: { cellWidth: 12, halign: 'center' },
+                        2: { cellWidth: 18, halign: 'center' },
+                        3: { cellWidth: 12, halign: 'center' },
+                        4: { cellWidth: 12, halign: 'center' },
+                        5: { cellWidth: 12, halign: 'center' },
+                        6: { cellWidth: 15, halign: 'center' },
+                        7: { cellWidth: 12, halign: 'center' },
+                        8: { cellWidth: 15, halign: 'center' },
+                        9: { cellWidth: 18, halign: 'center' },
+                        10: { cellWidth: 12, halign: 'center' },
+                        11: { cellWidth: 12, halign: 'center' },
+                        12: { cellWidth: 35, halign: 'left' }
+                    },
+                    margin: { top: 45 }
+                });
+                
                 // Footer hak cipta
                 const finalY = doc.lastAutoTable.finalY + 5;
                 doc.setTextColor(100, 100, 100);
